@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 @Component({
   selector: 'app-schedule',
@@ -9,20 +9,29 @@ export class ScheduleComponent implements OnInit {
   
   constructor() { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+  calendarEvents: any[] = [
+    {
+      title: 'Event Now',
+      date: '2022-07-15',
+    },
+    {
+      title: 'Event Later',
+      date: '2022-07-21',
+    }
+  ];
+  eventForm: any = {};
+  selectedDate = {
+    currentDate: new Date(),
+
   }
+  @ViewChild('modalButton', { static: true }) modalButton!: ElementRef;
   calendarOptions: CalendarOptions = {
     initialView: 'dayGridMonth',
     weekends: false, // initial value
     selectable: true,
     dateClick: this.handleDateClickEvent.bind(this),
-    events: [
-      {
-        title: 'Event Now',
-        start: '2022-07-15',
-        end: '2022-07-16'
-      }
-    ]
+    events: this.calendarEvents,
   };
 
   toggleWeekends() {
@@ -30,17 +39,23 @@ export class ScheduleComponent implements OnInit {
   }
 
   addEvent(dateStr: any) {
-    if (this.calendarOptions?.events) {
-      (this.calendarOptions.events as any).push({
+    console.log(dateStr);
+    this.calendarEvents.push(
+      {
         title: 'New Event',
-        start: dateStr,
-        end: dateStr
-      })
-    }
+        date: dateStr,
+      }
+    )
   }
 
   handleDateClickEvent (event: any) {
+    this.selectedDate = event.date;
+    this.modalButton.nativeElement.click();
     this.addEvent(event.dateStr);
     console.log(event);
+  }
+
+  onSubmit(form: any) {
+    console.log(this.eventForm, form);  // eventForm is the form object
   }
 }
