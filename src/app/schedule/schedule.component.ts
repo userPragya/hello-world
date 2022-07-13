@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/angular'; // useful for typechecking
 @Component({
@@ -7,7 +8,9 @@ import { CalendarOptions } from '@fullcalendar/angular'; // useful for typecheck
 })
 export class ScheduleComponent implements OnInit {
   
-  constructor() { }
+  constructor(
+    private httpClient: HttpClient,
+  ) { }
 
   ngOnInit(): void {}
   calendarEvents: any[] = [
@@ -57,5 +60,9 @@ export class ScheduleComponent implements OnInit {
 
   onSubmit(form: any) {
     console.log(this.eventForm, form);  // eventForm is the form object
+    // Send to backend server
+    this.httpClient.post('/api/events', this.eventForm).subscribe( (res) => {
+      console.log('Event added', res);
+    } );
   }
 }
